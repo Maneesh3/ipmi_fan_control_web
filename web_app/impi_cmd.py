@@ -17,6 +17,6 @@ async def fan_control_command(request:dict)->dict:
     result = subprocess.run(command, shell=True, text=True, capture_output=True)
     # need to add more error types
     if result.returncode == 0:  # Check if the command was successful
-        return {"code": "Success", "message" : result.stdout}
+        return {"code": "success", "message" : f"Fan speed set to {request['fanspeed']}% for IP {request['ipaddress']}"}
     else:
-        return {"code": "Error", "message" : result.stdout}
+        return {"code": "error", "message" : f"Command error : {result.stdout}"}

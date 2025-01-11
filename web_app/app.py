@@ -42,21 +42,26 @@ async def run_script():
 
 @app.get("/")
 async def root_page(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request, "message": None})
 
 # Process the submitted form data
-@app.post("/submit")
-async def submit_data(username: str = Form(...), 
+@app.post("/")
+async def submit_data(request: Request,
+        username: str = Form(...), 
         password: str = Form(...), 
         ipaddress: str = Form(...), 
         fanspeed: int = Form(...)):
-    request = {
+    request_data = {
         "username" : username, "password" : password, "ipaddress" : ipaddress, "fanspeed" : fanspeed
     }
-    print(request)
-    response_msg = await fan_control_command(request)
+    print(request_data)
+    response_data = await fan_control_command(request_data)
 
-    return JSONResponse(content=response_msg)
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "code": response_data["code"],
+        "message": response_data["message"]
+    })
 
 # Custom exception handler (example for improved error handling)
 @app.exception_handler(Exception)
