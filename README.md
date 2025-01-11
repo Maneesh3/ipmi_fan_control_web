@@ -8,5 +8,7 @@
 - `gunicorn -k uvicorn.workers.UvicornWorker -b 0.0.0.0:18081 app:app`
 
 ## TODO
+- [ ] set timeout for all requests
+- [ ] set security, running shell commands 
 - [ ] initial request (enabling manual fan control)
 - [ ] save config user based or login based
