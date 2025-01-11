@@ -13,7 +13,7 @@ async def run_command_test():
 
 async def fan_control_command(request:dict)->dict:
     command = f"ipmitool -I lanplus -H {request['ipaddress']} -U {request['username']} -P {request['password']} raw 0x30 0x30 0x02 0xff {hex(request['fanspeed'])}"
-    print(command)
+    # print(command)
     result = subprocess.run(command, shell=True, text=True, capture_output=True)
     # need to add more error types
     if result.returncode == 0:  # Check if the command was successful

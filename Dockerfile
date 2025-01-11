@@ -12,7 +12,7 @@ COPY web_app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Python file into the container
-COPY web_app/app.py .
+COPY web_app/ .
 
 # Expose port 8080
 EXPOSE 8080

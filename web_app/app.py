@@ -54,7 +54,7 @@ async def submit_data(request: Request,
     request_data = {
         "username" : username, "password" : password, "ipaddress" : ipaddress, "fanspeed" : fanspeed
     }
-    print(request_data)
+    # print(request_data)
     response_data = await fan_control_command(request_data)
 
     return templates.TemplateResponse("index.html", {
