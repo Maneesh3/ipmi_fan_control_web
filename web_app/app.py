@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from web_app.ipmi_cmd import run_command_test, fan_control_command
+from ipmi_cmd import run_command_test, fan_control_command
 
 # Create a FastAPI instance
 app = FastAPI()
