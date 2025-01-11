@@ -18,4 +18,4 @@ COPY web_app/app.py .
 EXPOSE 8080
 
 # Specify the default command to run the Python script
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8080", "app:app"]
