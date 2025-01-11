@@ -1,23 +1,20 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-import os
-import subprocess
+from impi_cmd import run_command_test, fan_control_command
 
 # Create a FastAPI instance
 app = FastAPI()
 
 
-async def run_command():
-    command = "ipmitool -V"
-    result = subprocess.run(command, shell=True, text=True, capture_output=True)
-    if result.returncode == 0:  # Check if the command was successful
-        print("Output:", result.stdout)
-        return "Success", result.stdout
-    else:
-        print("Error:", result.stderr)
-        return "Error", result.stdout
 
+# Mount the static directory to serve CSS and other assets
+app.mount("/static", StaticFiles(directory="static"), name="static")
+# Configure Jinja2 templates for rendering HTML
+templates = Jinja2Templates(directory="templates")
 
 # Add CORS middleware (Optional, based on your use case)
 app.add_middleware(
@@ -34,14 +31,32 @@ async def health_check():
     return {"status": "healthy"}
 
 # Define a simple test endpoint
-@app.get("/")
-async def read_root():
+@app.get("/test")
+async def test_page():
     return {"message": "Hello, FastAPI!"}
 
-@app.get("/run")
+@app.get("/test_run")
 async def run_script():
-    code, result = await run_command()
+    code, result = await run_command_test()
     return {"Code":str(code),"response": str(result)}
+
+@app.get("/")
+async def root_page(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+# Process the submitted form data
+@app.post("/submit")
+async def submit_data(username: str = Form(...), 
+        password: str = Form(...), 
+        ipaddress: str = Form(...), 
+        fanspeed: int = Form(...)):
+    request = {
+        "username" : username, "password" : password, "ipaddress" : ipaddress, "fanspeed" : fanspeed
+    }
+    print(request)
+    response_msg = await fan_control_command(request)
+
+    return JSONResponse(content=response_msg)
 
 # Custom exception handler (example for improved error handling)
 @app.exception_handler(Exception)
